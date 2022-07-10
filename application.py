@@ -83,11 +83,11 @@ def login():
         #     {'WWW-Authenticate': 'Basic realm ="Login required !!"'}
         # )
 
-    user = User.query \
-            .filter_by(email=auth.get('email')) \
-            .first()
+    # user = User.query \
+    #         .filter_by(email=auth.get('email')) \
+    #         .first()
 
-    if not user:
+    if map.get(auth.get('email')) is None:
         msg = f"User {auth.get('email')} does not exist !!!"
         return render_template("login.html", msg=msg)
         # return f"<h3>User {auth.get('email')} does not exits, Please enter valid user details</h3>"
@@ -97,7 +97,7 @@ def login():
             #     401,
             #     {'WWW-Authenticate': 'Basic realm ="User does not exist !!"'}
             # )
-
+    user = map.get(auth.get('email'))
     if check_password_hash(user.password, auth.get('password')):
             # generates the JWT Token
             token = jwt.encode({
@@ -106,7 +106,6 @@ def login():
             }, app.config['SECRET_KEY'])
 
             data = make_response(jsonify({'token': token.decode('UTF-8')}), 201)
-            map[user.email] = data.json["token"]
 
             print(data.json["token"])
             return data
@@ -135,16 +134,23 @@ def signup():
     password = data.get('password')
 
     # checking for existing user
-    user = User.query \
-        .filter_by(email=email) \
-        .first()
-    if not user:
-        # database ORM object
+    # user = User.query \
+    #     .filter_by(email=email) \
+    #     .first()
+    # if not user:
+    #     # database ORM object
+    #     user = User()
+    #     user.public_id=str(uuid.uuid4())
+    #     user.name=name
+    #     user.email=email
+    #     user.password=generate_password_hash(password)
+    if map.get(email) is None:
         user = User()
         user.public_id=str(uuid.uuid4())
         user.name=name
         user.email=email
         user.password=generate_password_hash(password)
+        map[email] = user
 
         # insert user
         # with open()
