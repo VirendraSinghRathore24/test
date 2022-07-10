@@ -1,5 +1,5 @@
-from flask import Flask\
-    # , render_template, request
+from flask import Flask, render_template
+    # , request
 
 # from menuitem import MenuItem
 
@@ -10,8 +10,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return "<h1>Viren</h1>"
-    # return render_template("login.html")
+    return render_template("login.html")
 
 
 # @app.route("/search", methods=["POST"])
