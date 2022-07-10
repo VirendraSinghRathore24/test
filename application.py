@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response, render_template
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -12,16 +12,22 @@ app.config['SECRET_KEY'] = "abcdefgh"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(100))
-    email = db.Column(db.String(70), unique=True)
-    password = db.Column(db.String(80))
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     public_id = db.Column(db.String(50), unique=True)
+#     name = db.Column(db.String(100))
+#     email = db.Column(db.String(70), unique=True)
+#     password = db.Column(db.String(80))
 
+class User:
+    def __int__(self, public_id, name, email, password):
+        self.public_id = public_id
+        self.name = name
+        self.email = email
+        self.password = password
 
 @app.route("/")
 def login_home():
@@ -134,15 +140,16 @@ def signup():
         .first()
     if not user:
         # database ORM object
-        user = User(
-            public_id=str(uuid.uuid4()),
-            name=name,
-            email=email,
-            password=generate_password_hash(password)
-        )
+        user = User()
+        user.public_id=str(uuid.uuid4())
+        user.name=name
+        user.email=email
+        user.password=generate_password_hash(password)
+
         # insert user
-        db.session.add(user)
-        db.session.commit()
+        # with open()
+        # db.session.add(user)
+        # db.session.commit()
         return render_template("login.html")
         # return make_response('Successfully registered.', 201)
     else:
